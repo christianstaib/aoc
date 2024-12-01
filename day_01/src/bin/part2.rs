@@ -12,7 +12,7 @@ fn main() {
 
     let similarity_score = get_similarity_score(file);
 
-    println!("similarity score  is {}", similarity_score);
+    println!("similarity score is {}", similarity_score);
 }
 
 fn get_similarity_score<R: Read>(reader: R) -> u32 {
