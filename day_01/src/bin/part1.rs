@@ -15,22 +15,26 @@ fn main() {
 }
 
 fn get_sum_of_differences<R: Read>(reader: R) -> u32 {
-    let mut left = Vec::new();
-    let mut right = Vec::new();
+    let mut first_column = Vec::new();
+    let mut second_column = Vec::new();
 
     for line in BufReader::new(reader).lines().map_while(Result::ok) {
-        let line = line.split_whitespace().collect::<Vec<_>>();
-        left.push(line[0].parse::<u32>().unwrap());
-        right.push(line[1].parse::<u32>().unwrap());
+        let line = line
+            .split_whitespace()
+            .flat_map(&str::parse::<u32>)
+            .collect::<Vec<_>>();
+
+        first_column.push(line[0]);
+        second_column.push(line[1]);
     }
 
-    left.sort_unstable();
-    right.sort_unstable();
+    first_column.sort_unstable();
+    second_column.sort_unstable();
 
-    let sum_of_differences = left
+    let sum_of_differences = first_column
         .iter()
-        .zip(right.iter())
-        .map(|(&left_num, &right_num)| left_num.abs_diff(right_num))
+        .zip(second_column.iter())
+        .map(|(&first_number, &second_number)| first_number.abs_diff(second_number))
         .sum::<u32>();
 
     sum_of_differences

@@ -18,20 +18,24 @@ fn main() {
 fn get_similarity_score<R: Read>(reader: R) -> u32 {
     let buf_reader = BufReader::new(reader);
 
-    let mut left = HashMap::new();
-    let mut right = HashMap::new();
+    let mut first_column = HashMap::new();
+    let mut second_column = HashMap::new();
 
     for line in buf_reader.lines().map_while(Result::ok) {
-        let line = line.split_whitespace().collect::<Vec<_>>();
-        *left.entry(line[0].parse::<u32>().unwrap()).or_insert(0) += 1;
-        *right.entry(line[1].parse::<u32>().unwrap()).or_insert(0) += 1;
+        let line = line
+            .split_whitespace()
+            .flat_map(&str::parse::<u32>)
+            .collect::<Vec<_>>();
+
+        *first_column.entry(line[0]).or_insert(0) += 1;
+        *second_column.entry(line[1]).or_insert(0) += 1;
     }
 
-    let similarity_score = left
+    let similarity_score = first_column
         .iter()
-        .map(|(&number, &apperance_left)| {
-            let apperance_right = right.get(&number).unwrap_or(&0);
-            apperance_left * (number * apperance_right)
+        .map(|(&number, &apperance_in_first_column)| {
+            let apperance_in_second_column = second_column.get(&number).unwrap_or(&0);
+            apperance_in_first_column * (number * apperance_in_second_column)
         })
         .sum::<u32>();
 
