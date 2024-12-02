@@ -41,15 +41,11 @@ fn get_number_of_safe_reports<R: Read>(reader: R) -> u32 {
             }
 
             // brute force the check if the report can be made valid by removing one element
-            for i in 0..report.len() {
+            (0..report.len()).any(|i| {
                 let mut report = report.clone();
                 report.remove(i);
-                if check_report(&report) {
-                    return true;
-                }
-            }
-
-            false
+                check_report(&report)
+            })
         })
         .count() as u32;
 
